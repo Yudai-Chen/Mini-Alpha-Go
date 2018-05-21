@@ -2,13 +2,15 @@
 
 /*
 * weight of each method
+* 基于位置特征的位置价值：position value
 * 凝聚步：quiet move
 * 稳定子：stable piece, 40步之前几乎不可能有稳定子， 终局搜索再去判断即可
 * 行动力：ability of action
 * 潜在行动力：potential
 * 棋子数：piece count
 * 奇偶性：parity，终局搜索的时候去算
-* 角位：coner
+* 角位：corner
+* 近角位：nearby corner
 * 边（不含角位）：edge
 * 棋子边界：boundary
 * 可落子处：valid
