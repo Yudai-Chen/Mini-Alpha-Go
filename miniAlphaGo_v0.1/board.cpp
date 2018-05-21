@@ -1,3 +1,6 @@
+#include<random>
+#include<ctime>
+
 #include "board.h"
 
 Board::Board()
@@ -13,7 +16,6 @@ Board::Board()
 	stateCount[!turn] = 2;
 	setBoundary();
 	setValidPosition();
-
 }
 
 void Board::setSideBoundary(bool side)
@@ -85,7 +87,7 @@ bool Board::isValid(short x, short y, bool side)
 	return res;
 }
 
-void Board::putPiece(Coord &coord)
+void Board::putPiece(const Coord &coord)
 {
 	short x = coord.first, y = coord.second;
 	short flipCount = 0;	//number of the pieces be flipped when the piece is put
@@ -107,6 +109,7 @@ void Board::putPiece(Coord &coord)
 	}
 	stateCount[turn] += flipCount + 1;
 	stateCount[!turn] -= flipCount;
+	hasPast[turn] = false;
 	turn = !turn;
 	setBoundary();
 	setValidPosition();
@@ -165,4 +168,11 @@ void Board::printBoard() const
 		std::cout << std::endl;
 	}
 	std::cout << "==================================================" << std::endl;
+}
+
+const Coord& Board::randomlyChooseNextStep() const
+{
+	std::srand((unsigned)time(NULL));
+	int choice = int(std::rand() % stateCount[VALID]);
+	return validPositionVector.at(choice);
 }

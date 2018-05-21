@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\json">
+      <UniqueIdentifier>{c488979f-c10f-47ea-b6d1-aa7357f35966}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MCTS.cpp">
@@ -22,6 +25,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MCTS_node.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -37,6 +43,42 @@
     </ClInclude>
     <ClInclude Include="position.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MCTS_node.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="json\allocator.h">
+      <Filter>头文件\json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\assertions.h">
+      <Filter>头文件\json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\autolink.h">
+      <Filter>头文件\json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\config.h">
+      <Filter>头文件\json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\features.h">
+      <Filter>头文件\json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\forwards.h">
+      <Filter>头文件\json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\json.h">
+      <Filter>头文件\json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\reader.h">
+      <Filter>头文件\json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\value.h">
+      <Filter>头文件\json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\version.h">
+      <Filter>头文件\json</Filter>
+    </ClInclude>
+    <ClInclude Include="json\writer.h">
+      <Filter>头文件\json</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

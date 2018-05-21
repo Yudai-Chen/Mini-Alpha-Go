@@ -27,7 +27,8 @@ const short W1 = 1;
 //stable pieces count evaluate
 const short W2 = 1;
 
-//the super argument of MCTS, the greater it is, 
+//the hyperparameter of MCTS. the greater it is, the more confidental to the result
+//也许在初盘、中盘、终局应当取不同的值
 const double _C = 1.95;
 
 //weight evaluation, based on experience, used for position evaluate

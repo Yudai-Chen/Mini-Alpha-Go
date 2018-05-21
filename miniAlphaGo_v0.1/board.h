@@ -27,10 +27,6 @@ private:
 
 	std::vector<Coord> validPositionVector;
 
-	/* MCTS structure*/
-	Board* parent;         //parent node
-	Board* child[30];      //children node
-
 private:
 	/* Game rules */
 	inline short bitoffset(short x, short y) const { return (x * 10 + y); }	//transform (x,y) to a number
@@ -66,7 +62,7 @@ private:
 			((y == 1 || y == 8) && x >1 && x < 8));
 	}
 
-	//is (x, y) a valid position for a side. Before call it, you must confirm (x, y) is a empty
+	//is (x, y) a valid position for a side. Before call it, you should confirm (x, y) is a empty position
 	//not a const function, because it changes the valid_dir of a position
 	bool isValid(short x, short y, bool side);
 
@@ -76,7 +72,7 @@ public:
 	//print current boundary, for debugging
 	void printBoundary() const;
 
-	void putPiece(Coord &coord);
+	void putPiece(const Coord &coord);
 
 	inline bool whosTurn() const { return turn; }
 
@@ -121,4 +117,7 @@ public:
 
 	// do the pass
 	void doPass();
+
+	// choose a valid step randomly. before call it, you should confirm that there is at least one valid step
+	const Coord& randomlyChooseNextStep() const;
 };
