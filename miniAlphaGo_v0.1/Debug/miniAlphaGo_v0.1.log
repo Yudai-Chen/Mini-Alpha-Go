@@ -1,0 +1,11 @@
+﻿  board.cpp
+d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\board.cpp(25): warning C4805: “==”: 在操作中将类型“State”与类型“bool”混合不安全
+d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\board.cpp(75): warning C4805: “==”: 在操作中将类型“State”与类型“bool”混合不安全
+  正在生成代码...
+  正在编译...
+  main.cpp
+  正在生成代码...
+  正在跳过...(未检测到相关更改)
+  MCTS.cpp
+  miniAlphaGo_v0.1.vcxproj -> D:\files\Lessons\Lesson 17-18 spring\Artificial Intelligence\project\1\miniAlphaGo_v0.1\Debug\miniAlphaGo_v0.1.exe
+  miniAlphaGo_v0.1.vcxproj -> D:\files\Lessons\Lesson 17-18 spring\Artificial Intelligence\project\1\miniAlphaGo_v0.1\Debug\miniAlphaGo_v0.1.pdb (Full PDB)
