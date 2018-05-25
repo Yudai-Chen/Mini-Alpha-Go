@@ -7,6 +7,7 @@ extern Coord star[];
 Board::Board()
 {
 	turn = true;
+	turnID = 0;
 	position[4][4].state = WHITE;
 	position[4][5].state = BLACK;
 	position[5][4].state = BLACK;
@@ -19,13 +20,15 @@ Board::Board()
 	setValidPosition();
 }
 
-void Board::setSideBoundary(bool side)
+void Board::setSideBoundaryAndEvaluatePositionValue(bool side)
 {
 	sideBoundary[side].reset();
-
+	positionValueEvaluate[side] = 0;
 	for (short i = 1; i < 9; i++)
 		for (short j = 1; j < 9; j++)
 			if (position[i][j].state == side)
+			{
+				positionValueEvaluate[side] += getPositionValueForCertainMove(i, j);
 				for (short d = 0; d < 8; d++)
 				{
 					short x = i + delta[d][0];
@@ -35,12 +38,13 @@ void Board::setSideBoundary(bool side)
 						sideBoundary[side].set(bitoffset(x, y));
 					}
 				}
+			}
 }
 
 void Board::setBoundary()
 {
-	setSideBoundary(0);
-	setSideBoundary(1);
+	setSideBoundaryAndEvaluatePositionValue(0);
+	setSideBoundaryAndEvaluatePositionValue(1);
 	boundary = sideBoundary[0] | sideBoundary[1];
 }
 
@@ -111,6 +115,7 @@ void Board::putPiece(const Coord &coord)
 	stateCount[!turn] -= flipCount;
 	hasPast[turn] = false;
 	turn = !turn;
+	turnID++;
 	setBoundary();
 	setValidPosition();
 }
@@ -139,6 +144,7 @@ void Board::doPass()
 {
 	hasPast[turn] = true;
 	turn = !turn;
+	turnID++;
 	setValidPosition();
 }
 

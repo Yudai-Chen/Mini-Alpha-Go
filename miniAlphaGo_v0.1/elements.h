@@ -23,34 +23,29 @@
 
 #define AIVE_MODE
 
+//#define PRINT_DETAIL_SCORES
+
 #define SOLID_THINK_TIME
 #ifdef SOLID_THINK_TIME
 const int think_time = 10;
-#define OUTPUT_SEARCH_TIME
+//#define OUTPUT_SEARCH_TIME
 #endif // SOLID_THINK_TIME
-
 
 //#define SOLID_SEARCH_TIME
 #ifdef SOLID_SEARCH_TIME
 const int search_time = 100000;
 #define OUTPUT_THINK_TIME
+#define SEARCH_PARALLELLY
 #endif // SOLID_SEARCH_TIME
-
-//#define SEARCH_PARALLELLY
 
 enum Result { WHITE_WIN, BLACK_WIN, DRAW, UNFINISHED };
 const std::string Result_String[] = { "White side win.", "Black side win.", "It's a draw." };
 
 const int pool_size = 4000;
 
-//position evaluate
-const short W1 = 1;
-//stable pieces count evaluate
-const short W2 = 1;
-
 //the hyperparameter of MCTS. the greater it is, the more confidental to the result
 //在初盘、中盘、终局应当取不同的值
-const double _C = 1.95;
+const double _C = 1.4;
 
 //weight evaluation, based on experience, used for position evaluate
 const short position_value[10][10] = {
@@ -70,6 +65,12 @@ const double win_above_10 = 1;
 const double win_above_5 = 0.9;
 const double win_below_5 = 0.8;
 const double draw = 0.5;
+
+//#define OUTPUT_DETAIL_SCORE
+
+//#define DEBUG_MODE_CHOICE_REASON
+
+//#define DEBUG_MODE_POSITION_VALUE_EVALUATE
 
 //#define DEBUG_MODE
 

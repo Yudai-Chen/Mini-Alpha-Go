@@ -30,14 +30,15 @@ MCTS_node* MCTS::select()
 			return curNode;
 		}
 #ifdef SEARCH_PARALLELLY
-		omp_set_lock(&search_lock);
-#endif
-		if (curNode->hasUnexpandedChild())
+#pragma omp critical
 		{
-			return expand(curNode);
-		}	
+#endif
+			if (curNode->hasUnexpandedChild())
+			{
+				return expand(curNode);
+			}
 #ifdef SEARCH_PARALLELLY
-		omp_unset_lock(&search_lock);
+		}
 #endif
 		nextNode = curNode->getBestChild(C);
 		if (nextNode == nullptr)
@@ -127,8 +128,8 @@ Coord MCTS::search()
 #endif
 #ifdef SOLID_SEARCH_TIME
 #ifdef SEARCH_PARALLELLY
-	omp_init_lock(&search_lock);
-#pragma omp parallel for
+	//omp_init_lock(&search_lock);
+#pragma omp parallel for num_threads(2)
 #endif
 	for (searchTimeCount = 0; searchTimeCount < search_time; searchTimeCount++)
 	{

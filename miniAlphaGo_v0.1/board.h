@@ -17,6 +17,8 @@ class Board
 private:
 	/* the characters of a board on a time slide */
 	bool turn;
+	short turnID;
+
 	Position position[10][10]; //the status of each position
 
 	std::bitset<100> boundary; //the boundary of both sides
@@ -27,6 +29,8 @@ private:
 	std::vector<Coord> validPositionVector;
 
 	bool hasPast[2];
+
+	int positionValueEvaluate[2];
 
 private:
 	/* Game rules */
@@ -44,7 +48,7 @@ private:
 
 
 	//set the boundary of a side
-	void setSideBoundary(bool side);
+	void setSideBoundaryAndEvaluatePositionValue(bool side);
 
 	//set the boundary of both sides
 	void setBoundary();
@@ -77,6 +81,8 @@ public:
 
 	inline bool whosTurn() const { return turn; }
 
+	inline int getTurnId() const { return turnID; }
+
 	inline short getPieceCount(bool side) const { return stateCount[side]; }
 
 	//print valid move, for debugging
@@ -84,6 +90,8 @@ public:
 
 	//print board, for debugging
 	void printBoard() const;
+
+	inline void printPositionValueEvaluate() const { std::cout << getPositionValueEvaluate(whosTurn()) << std::endl; }
 
 	inline const bool isCertainStepValid(Coord &coord)
 	{
@@ -129,12 +137,15 @@ public:
 	// randomly play with itself to the terminal, return ( black piece count - white piece count)
 	int randomlyPlayAndGetDetail();
 
-	inline int getPositionValue(short x, short y) { return position_value[x][y]; }
-	inline int getPositionValue(Coord coord) { return position_value[coord.first][coord.second]; }
+	inline int getPositionValueForCertainMove(short x, short y) { return position_value[x][y]; }
+	inline int getPositionValueForCertainMove(Coord coord) { return position_value[coord.first][coord.second]; }
+
+	//range from -96 to 264
+	inline int getPositionValueEvaluate(bool side) const { return positionValueEvaluate[side] - positionValueEvaluate[!side];  }
 
 	inline int getMobility() { return stateCount[VALID]; }
 
-	inline int getPotential(bool side) { return sideBoundary[side].count(); }
+	inline int getPotential(bool side) { return sideBoundary[!side].count(); }
 
 	inline int getCornerCount(bool side) 
 	{ 
@@ -144,7 +155,7 @@ public:
 			(position[8][8].state == State(side));
 	}
 
-	inline int getNearbyCount(bool side);
+	int getNearbyCount(bool side);
 
 	int getEdgeCornerStable(bool side);
 

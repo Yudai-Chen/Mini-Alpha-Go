@@ -19,7 +19,16 @@ private:
 	unsigned short childCount; //number of child nodes
 	std::vector<Coord> unvisited;
 
-	
+#ifdef PRINT_DETAIL_SCORES
+	double positionValueScore;
+	double cornerCountScore;
+	double mobilityScore;
+	double potentialScore;
+	double nearbyCountScore;
+	double edgeCornerStableScore;
+#endif
+private:
+	double calculateNodeQuality();
 
 public:
 	MCTS_node(){}
@@ -55,5 +64,9 @@ public:
 	inline bool isTerminal() const { return board.isTerminal() < UNFINISHED; }
 
 	inline bool shouldPass() const { return board.shouldPass(); }
+
+#ifdef PRINT_DETAIL_SCORES
+	void printChildDetailScores();
+#endif
 };
 

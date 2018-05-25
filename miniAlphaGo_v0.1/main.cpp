@@ -8,6 +8,10 @@
 #pragma comment(lib, "WS2_32.lib")  
 #pragma comment(lib, "json/json_vc71_libmtd.lib")  
 
+#ifdef DEBUG_MODE_POSITION_VALUE_EVALUATE
+extern double maxQuality, minQuality;
+#endif // DEBUG_MODE_POSITION_VALUE_EVALUATE
+
 Coord star[4] = { Coord(2, 2), Coord(7, 7), Coord(2, 7), Coord(7, 2) };
 Coord corner[4] = { Coord(1, 1), Coord(8, 8), Coord(1, 8), Coord(8, 1) };
 
@@ -120,74 +124,79 @@ int main()
 	SendAddr.sin_addr.s_addr = inet_addr("192.168.18.1");
 	bind(ReceiveSocket, (struct sockaddr *)&RecvAddr, sizeof(RecvAddr));
 
-	while (1)
-	{		
-		Board mainBoard;
-		memset(rec, 0, 100);
-		if (connect(ReceiveSocket, (struct sockaddr *)&SendAddr, sizeof(SendAddr)) == -1)
-			continue;
-		recv(ReceiveSocket, rec, 100, 0);
 
+	Board mainBoard;
+	memset(rec, 0, 100);
+	while (connect(ReceiveSocket, (struct sockaddr *)&SendAddr, sizeof(SendAddr)) == -1);
+
+	recv(ReceiveSocket, rec, 100, 0);
+
+	reader.parse(rec, recv_value);
+	if (recv_value["Black"].asInt() == 0)
+	{
+		memset(rec, 0, 100);
+		recv(ReceiveSocket, rec, 100, 0);
 		reader.parse(rec, recv_value);
-		if (recv_value["Black"].asInt() == 0)
+		Coord move = Coord(recv_value["x"].asInt(), recv_value["y"].asInt());
+		servertoLocal(move);
+		mainBoard.putPiece(move);
+	}
+	while (1)
+	{
+		if (mainBoard.shouldPass())
 		{
-			memset(rec, 0, 100);
-			recv(ReceiveSocket, rec, 100, 0);
-			reader.parse(rec, recv_value);
+			mainBoard.doPass();
+			send_value["x"] = -1;
+			send_value["y"] = -1;
+			SendBuf = style_write.write(send_value);
+			while (send(ReceiveSocket, SendBuf.c_str(), SendBuf.size(), 0) == -1);
+		}
+		else
+		{
+#ifdef DEBUG_MODE_POSITION_VALUE_EVALUATE
+			maxQuality = 0;
+			minQuality = 0;
+#endif // DEBUG_MODE_POSITION_VALUE_EVALUATE
+			MCTS miniAlphaGo(mainBoard, mainBoard.whosTurn(), _C);
+			Coord move = miniAlphaGo.search();
+			mainBoard.putPiece(move);
+			localtoServer(move);
+			send_value["x"] = move.first;
+			send_value["y"] = move.second;
+			SendBuf = style_write.write(send_value);
+			while (send(ReceiveSocket, SendBuf.c_str(), SendBuf.size(), 0) == -1);
+			miniAlphaGo.release();
+#ifdef DEBUG_MODE_POSITION_VALUE_EVALUATE
+			std::cout << "max quality: " << maxQuality << std::endl << "min quality: " << minQuality << std::endl << std::endl;
+#endif // DEBUG_MODE_POSITION_VALUE_EVALUATE
+		}
+		res = mainBoard.isTerminal();
+		if (res < UNFINISHED)
+		{
+			std::cout << Result_String[res] << std::endl;
+			std::cout << "black: " << mainBoard.getPieceCount(true) << ", white: " << mainBoard.getPieceCount(false) << std::endl;
+			break;
+		}
+		recv(ReceiveSocket, rec, 100, 0);
+		reader.parse(rec, recv_value);
+		if (recv_value["x"] == -1 && recv_value["y"] == -1)
+		{
+			mainBoard.doPass();
+		}
+		else
+		{
 			Coord move = Coord(recv_value["x"].asInt(), recv_value["y"].asInt());
 			servertoLocal(move);
 			mainBoard.putPiece(move);
 		}
-		while (1)
+		res = mainBoard.isTerminal();
+		if (res < UNFINISHED)
 		{
-			if (mainBoard.shouldPass())
-			{
-				mainBoard.doPass();
-				send_value["x"] = -1;
-				send_value["y"] = -1;
-				SendBuf = style_write.write(send_value);
-				while (send(ReceiveSocket, SendBuf.c_str(), SendBuf.size(), 0) == -1);
-			}
-			else
-			{
-				MCTS miniAlphaGo(mainBoard, mainBoard.whosTurn(), _C);
-				Coord move = miniAlphaGo.search();			
-				mainBoard.putPiece(move);
-				localtoServer(move);
-				send_value["x"] = move.first;
-				send_value["y"] = move.second;
-				SendBuf = style_write.write(send_value);
-				while (send(ReceiveSocket, SendBuf.c_str(), SendBuf.size(), 0) == -1);
-				miniAlphaGo.release();
-			}
-			res = mainBoard.isTerminal();
-			if (res < UNFINISHED)
-			{
-				std::cout << Result_String[res] << std::endl;
-				std::cout << "black: " << mainBoard.getPieceCount(true) << ", white: " << mainBoard.getPieceCount(false) << std::endl;
-				break;
-			}
-			recv(ReceiveSocket, rec, 100, 0);
-			reader.parse(rec, recv_value);
-			if (recv_value["x"] == -1 && recv_value["y"] == -1)
-			{
-				mainBoard.doPass();
-			}
-			else
-			{
-				Coord move = Coord(recv_value["x"].asInt(), recv_value["y"].asInt());
-				servertoLocal(move);
-				mainBoard.putPiece(move);
-			}
-			res = mainBoard.isTerminal();
-			if (res < UNFINISHED)
-			{
-				std::cout << Result_String[res] << std::endl;
-				std::cout << "black: " << mainBoard.getPieceCount(true) << ", white: " << mainBoard.getPieceCount(false) << std::endl;
-				break;
-			}
+			std::cout << Result_String[res] << std::endl;
+			std::cout << "black: " << mainBoard.getPieceCount(true) << ", white: " << mainBoard.getPieceCount(false) << std::endl;
+			break;
 		}
-
 	}
+
 }
 #endif
