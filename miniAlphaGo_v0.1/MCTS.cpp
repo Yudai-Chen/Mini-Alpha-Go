@@ -1,4 +1,10 @@
+#include <time.h>
+#include "omp.h"  
 #include "MCTS.h"
+
+#ifdef SEARCH_PARALLELLY
+omp_lock_t search_lock;
+#endif
 
 MCTS::MCTS(const Board & board, bool _turn, double _C)
 {
@@ -6,35 +12,134 @@ MCTS::MCTS(const Board & board, bool _turn, double _C)
 
 	root_turn = _turn;
 
-	pool = (char*)malloc(sizeof(MCTS_node) * 1000);
+	memoryPool = new Memory_pool();
 
 	nodeCount = 0;
 
 	C = _C;
 }
 
-int MCTS::select()
+MCTS_node* MCTS::select()
 {
+	MCTS_node * curNode = root;
+	MCTS_node * nextNode = nullptr;
+	while (1)
+	{	
+		if (curNode->isTerminal())
+		{
+			return curNode;
+		}
+#ifdef SEARCH_PARALLELLY
+		omp_set_lock(&search_lock);
+#endif
+		if (curNode->hasUnexpandedChild())
+		{
+			return expand(curNode);
+		}	
+#ifdef SEARCH_PARALLELLY
+		omp_unset_lock(&search_lock);
+#endif
+		nextNode = curNode->getBestChild(C);
+		if (nextNode == nullptr)
+		{
+			return curNode;
+		}
+		curNode = nextNode;		
+	}
 	return 0;
 }
 
-int MCTS::expand()
+MCTS_node * MCTS::expand(MCTS_node * needExpand)
 {
-	return 0;
+	Coord move = needExpand->popUnvisitied();
+	MCTS_node * res;
+	if(nodeCount >= pool_size)
+	{
+		memoryPool->expandMemoryPool();
+		nodeCount = 0;
+	}
+	nodeCount++;
+
+#ifdef DEBUG_PRINT_WHEN_NODE_100
+	if (nodeCount % 100 == 0)
+		std::cout << nodeCount << std::endl;
+#endif
+	res = new(memoryPool->getMemoryPool() + (nodeCount - 1) * sizeof(MCTS_node)) MCTS_node(needExpand, move);
+	if (res->shouldPass())
+	{
+		if (nodeCount >= pool_size)
+		{
+			memoryPool->expandMemoryPool();
+			nodeCount = 0;
+		}
+		nodeCount++;
+		res = new(memoryPool->getMemoryPool() + (nodeCount - 1) * sizeof(MCTS_node)) MCTS_node(res, Coord(-1, -1));
+	}
+	return res;
 }
 
-int MCTS::simulate(const Board* start)
+double MCTS::simulate(MCTS_node* start)
 {
-	return 0;
+	return start->rollout();
 }
 
-int MCTS::propagate()
+int MCTS::propagate(MCTS_node* start, double simulateResult)
 {
+	MCTS_node* curNode = start;
+	while (curNode != nullptr)
+	{
+		curNode->changeVisitTimeAndWinTime(simulateResult);
+		curNode = curNode->getParent();
+	}
 	return 0;
 }
 
 void MCTS::release()
 {
 	root->release();
-	delete[] pool;
+	memoryPool->release();
+}
+
+Coord MCTS::search()
+{
+	time_t timeStart = time(NULL);
+	time_t timeEnd;
+	int searchTimeCount = 0;
+#ifdef SOLID_THINK_TIME
+	while (1)
+	{
+		searchTimeCount++;
+		MCTS_node * currNode = select();
+		double simulateRes = simulate(currNode);
+		propagate(currNode, simulateRes);
+		if (searchTimeCount % 2000 == 0)
+		{
+			timeEnd = time(NULL);
+			if (timeEnd - timeStart >= think_time)
+			{  
+				break;
+			}
+		}
+	}
+#ifdef OUTPUT_SEARCH_TIME
+	std::cout << "Search time for this move: " << searchTimeCount << std::endl;
+#endif
+#endif
+#ifdef SOLID_SEARCH_TIME
+#ifdef SEARCH_PARALLELLY
+	omp_init_lock(&search_lock);
+#pragma omp parallel for
+#endif
+	for (searchTimeCount = 0; searchTimeCount < search_time; searchTimeCount++)
+	{
+		MCTS_node * currNode = select();
+		double simulateRes = simulate(currNode);
+		propagate(currNode, simulateRes);
+	}
+#ifdef OUTPUT_THINK_TIME
+	timeEnd = time(NULL);
+	std::cout << "Think time for this move: " << timeEnd - timeStart << std::endl;
+#endif
+#endif
+	return root->choiceAfterMCTS();
 }

@@ -30,6 +30,9 @@
     <ClCompile Include="MCTS_node.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Memory_pool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MCTS.h">
@@ -79,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="json\writer.h">
       <Filter>头文件\json</Filter>
+    </ClInclude>
+    <ClInclude Include="memory_pool.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

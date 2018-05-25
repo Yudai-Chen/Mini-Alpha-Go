@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MCTS_node.h"
+#include "memory_pool.h"
 
 class MCTS
 {
@@ -12,7 +13,7 @@ private:
 	bool root_turn;
 
 	//a memory pool, used for the rollout phase
-	char * pool;
+	Memory_pool * memoryPool;
 
 	//the number of codes on the tree
 	unsigned int nodeCount;
@@ -22,9 +23,10 @@ private:
 public:
 	MCTS(){}
 	MCTS(const Board & board, bool _turn, double _C);
-	int select();
-	int expand();
-	int simulate(const Board* start);
-	int propagate();
+	MCTS_node *  select();
+	MCTS_node *  expand(MCTS_node * needExpand);
+	double simulate(MCTS_node* start);
+	int propagate(MCTS_node* start, double simulateResult);
 	void release();
+	Coord search();
 };

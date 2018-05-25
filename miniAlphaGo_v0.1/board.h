@@ -17,7 +17,6 @@ class Board
 private:
 	/* the characters of a board on a time slide */
 	bool turn;
-	bool hasPast[2]; //if white side has just past, hasPast[0] = true. if black side has just past, hasPast[1] = true;
 	Position position[10][10]; //the status of each position
 
 	std::bitset<100> boundary; //the boundary of both sides
@@ -27,10 +26,12 @@ private:
 
 	std::vector<Coord> validPositionVector;
 
+	bool hasPast[2];
+
 private:
 	/* Game rules */
 	inline short bitoffset(short x, short y) const { return (x * 10 + y); }	//transform (x,y) to a number
-	inline Coord bitdeoffset(short x) const { assert(x >= 0 && x < 100); return std::pair<short, short>(x / 10, x % 10); } //transform a number to a coordination
+	inline Coord bitdeoffset(short x) const { return std::pair<short, short>(x / 10, x % 10); } //transform a number to a coordination
 
 	void setValidPosition();
 
@@ -95,16 +96,16 @@ public:
 	//This time the turn has already been flipped.
 	inline const Result isTerminal() const
 	{
-		//when the other side has just put a piece, it's only possible that my pieces have run out
-		if (!stateCount[turn])
-		{
-			return Result(!turn);
-		}
-		if (stateCount[WHITE] + stateCount[BLACK] == 64)
+		//when the other side has just put a piece, it's only possible that my pieces have run out	
+		if ((stateCount[WHITE] + stateCount[BLACK] == 64) || (hasPast[0] && hasPast[1]))
 		{
 			if (stateCount[WHITE] == stateCount[BLACK])
 				return DRAW;
 			return stateCount[WHITE] > stateCount[BLACK] ? WHITE_WIN : BLACK_WIN;
+		}
+		if (!stateCount[turn])
+		{
+			return Result(!turn);
 		}
 		return UNFINISHED;
 	}
@@ -120,4 +121,32 @@ public:
 
 	// choose a valid step randomly. before call it, you should confirm that there is at least one valid step
 	const Coord& randomlyChooseNextStep() const;
+
+	// randomly play with itself to the terminal, return the result
+	Result randomlyPlay();
+	Result randomlyPlay_DEBUG();
+
+	// randomly play with itself to the terminal, return ( black piece count - white piece count)
+	int randomlyPlayAndGetDetail();
+
+	inline int getPositionValue(short x, short y) { return position_value[x][y]; }
+	inline int getPositionValue(Coord coord) { return position_value[coord.first][coord.second]; }
+
+	inline int getMobility() { return stateCount[VALID]; }
+
+	inline int getPotential(bool side) { return sideBoundary[side].count(); }
+
+	inline int getCornerCount(bool side) 
+	{ 
+		return (position[1][1].state == State(side)) +
+			(position[1][8].state == State(side)) +
+			(position[8][1].state == State(side)) +
+			(position[8][8].state == State(side));
+	}
+
+	inline int getNearbyCount(bool side);
+
+	int getEdgeCornerStable(bool side);
+
+	inline std::vector<Coord> getValidPosition() const { return validPositionVector; }
 };

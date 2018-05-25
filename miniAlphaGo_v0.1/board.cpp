@@ -1,17 +1,18 @@
 #include<random>
-#include<ctime>
 
 #include "board.h"
+
+extern Coord star[];
 
 Board::Board()
 {
 	turn = true;
-	hasPast[0] = 0;
-	hasPast[1] = 0;
 	position[4][4].state = WHITE;
 	position[4][5].state = BLACK;
 	position[5][4].state = BLACK;
 	position[5][5].state = WHITE;
+	hasPast[0] = false;
+	hasPast[1] = false;
 	stateCount[turn] = 2;
 	stateCount[!turn] = 2;
 	setBoundary();
@@ -57,7 +58,6 @@ void Board::printBoundary() const
 bool Board::isValid(short x, short y, bool side)
 {
 	bool res = false;
-	assert(onSolidBoard(x, y));
 	if (position[x][y].state < VALID)
 	{
 		std::cerr << "Try to put a piece on another piece" << std::endl;
@@ -172,7 +172,186 @@ void Board::printBoard() const
 
 const Coord& Board::randomlyChooseNextStep() const
 {
-	std::srand((unsigned)time(NULL));
 	int choice = int(std::rand() % stateCount[VALID]);
 	return validPositionVector.at(choice);
+}
+
+Result Board::randomlyPlay()
+{
+	Result res;
+	while (1)
+	{
+		res = isTerminal();
+		if (res < UNFINISHED)
+			return res;
+		if (shouldPass())
+			doPass();
+		else
+		{
+			Coord move = randomlyChooseNextStep();
+			if(move == star[0] || move == star[1] || move == star[2] || move == star[3])
+				move = randomlyChooseNextStep();
+			putPiece(move);
+		}
+	}
+}
+
+Result Board::randomlyPlay_DEBUG()
+{
+	Result res;
+	while (1)
+	{
+		res = isTerminal();
+		if (res < UNFINISHED)
+		{
+			std::cout << Result_String[res] << std::endl;
+			std::cout << "black: " << getPieceCount(true) << ", white: " << getPieceCount(false) << std::endl;
+			return res;
+		}
+		if (shouldPass())
+		{
+			std::cout << "You must pass." << std::endl;
+			doPass();
+		}
+		else
+		{
+			Coord move = randomlyChooseNextStep();
+			if (move == star[0] || move == star[1] || move == star[2] || move == star[3])
+				move = randomlyChooseNextStep();
+			putPiece(move);
+			std::cout << turn << ": (" << move.first << "," << move.second << ")" << std::endl;
+		}
+	}
+}
+
+int Board::randomlyPlayAndGetDetail()
+{
+	Result res;
+	while (1)
+	{
+		res = isTerminal();
+		if (res < UNFINISHED)
+			return getPieceCount(true) - getPieceCount(false);
+		if (shouldPass())
+			doPass();
+		else
+		{
+			Coord move = randomlyChooseNextStep();
+			if (move == star[0] || move == star[1] || move == star[2] || move == star[3])
+				move = randomlyChooseNextStep();
+			putPiece(move);
+#ifdef DEBUG_MODE
+			printBoard();
+#endif
+		}
+	}
+}
+
+int Board::getNearbyCount(bool side)
+{
+	int res = 0;
+	if (position[1][1].state > BLACK)
+	{
+		res += (position[1][2].state == State(side)) +
+			(position[2][1].state == State(side)) +
+			2 * (position[2][2].state == State(side));
+	}
+	if (position[1][8].state > BLACK)
+	{
+		res += (position[1][7].state == State(side)) +
+			(position[2][8].state == State(side)) +
+			2 * (position[2][7].state == State(side));
+	}
+	if (position[8][1].state > BLACK)
+	{
+		res += (position[7][1].state == State(side)) +
+			(position[8][2].state == State(side)) +
+			2 * (position[7][2].state == State(side));
+	}
+	if (position[8][8].state > BLACK)
+	{
+		res += (position[7][8].state == State(side)) +
+			(position[8][7].state == State(side)) +
+			2 * (position[7][7].state == State(side));
+	}
+	return res;
+}
+
+int Board::getEdgeCornerStable(bool side)
+{
+	int res = 0;
+	if (position[1][1].state == State(side))
+	{
+		res++;
+		for (int i = 2; i < 8; i++)
+		{
+			if (position[1][i].state == State(side))
+				res++;
+			else
+				break;
+		}
+		for (int i = 2; i < 8; i++)
+		{
+			if (position[i][1].state == State(side))
+				res++;
+			else
+				break;
+		}
+	}
+	if (position[1][8].state == State(side))
+	{
+		res++;
+		for (int i = 7; i > 1; i--)
+		{
+			if (position[1][i].state == State(side))
+				res++;
+			else
+				break;
+		}
+		for (int i = 2; i < 8; i++)
+		{
+			if (position[i][8].state == State(side))
+				res++;
+			else
+				break;
+		}
+	}
+	if (position[8][1].state == State(side))
+	{
+		res++;
+		for (int i = 2; i < 8; i++)
+		{
+			if (position[8][i].state == State(side))
+				res++;
+			else
+				break;
+		}
+		for (int i = 7; i >1; i--)
+		{
+			if (position[i][1].state == State(side))
+				res++;
+			else
+				break;
+		}
+	}
+	if (position[8][8].state == State(side))
+	{
+		res++;
+		for (int i = 7; i > 1; i--)
+		{
+			if (position[8][i].state == State(side))
+				res++;
+			else
+				break;
+		}
+		for (int i = 7; i >1; i--)
+		{
+			if (position[i][1].state == State(side))
+				res++;
+			else
+				break;
+		}
+	}
+
+	return res;
 }

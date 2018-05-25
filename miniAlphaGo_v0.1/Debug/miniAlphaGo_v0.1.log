@@ -1,3 +1,26 @@
-﻿  LINK : 没有找到 D:\files\Lessons\Lesson 17-18 spring\Artificial Intelligence\project\1\miniAlphaGo_v0.1\Debug\miniAlphaGo_v0.1.exe 或上一个增量链接没有生成它；正在执行完全链接
+﻿  MCTS.cpp
+d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\mcts_node.h(39): warning C4800: “unsigned int”: 将值强制为布尔值“true”或“false”(性能警告)
+  正在生成代码...
+  正在编译...
+  main.cpp
+d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\mcts_node.h(39): warning C4800: “unsigned int”: 将值强制为布尔值“true”或“false”(性能警告)
+d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\main.cpp(92): warning C4996: 'Json::StyledWriter': Use StreamWriterBuilder instead
+  d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\json\writer.h(227): note: 参见“Json::StyledWriter”的声明
+d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\main.cpp(112): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+  c:\program files (x86)\windows kits\8.1\include\um\winsock2.h(1850): note: 参见“inet_addr”的声明
+d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\main.cpp(120): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+  c:\program files (x86)\windows kits\8.1\include\um\winsock2.h(1850): note: 参见“inet_addr”的声明
+d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\main.cpp(148): warning C4996: 'Json::StyledWriter::write': Use StreamWriterBuilder instead
+  d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\json\writer.h(237): note: 参见“Json::StyledWriter::write”的声明
+d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\main.cpp(159): warning C4996: 'Json::StyledWriter::write': Use StreamWriterBuilder instead
+  d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\json\writer.h(237): note: 参见“Json::StyledWriter::write”的声明
+  board.cpp
+d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\board.cpp(28): warning C4805: “==”: 在操作中将类型“State”与类型“bool”混合不安全
+d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\board.cpp(77): warning C4805: “==”: 在操作中将类型“State”与类型“bool”混合不安全
+  Memory_pool.cpp
+d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\mcts_node.h(39): warning C4800: “unsigned int”: 将值强制为布尔值“true”或“false”(性能警告)
+  MCTS_node.cpp
+d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\mcts_node.h(39): warning C4800: “unsigned int”: 将值强制为布尔值“true”或“false”(性能警告)
+  正在生成代码...
   miniAlphaGo_v0.1.vcxproj -> D:\files\Lessons\Lesson 17-18 spring\Artificial Intelligence\project\1\miniAlphaGo_v0.1\Debug\miniAlphaGo_v0.1.exe
   miniAlphaGo_v0.1.vcxproj -> D:\files\Lessons\Lesson 17-18 spring\Artificial Intelligence\project\1\miniAlphaGo_v0.1\Debug\miniAlphaGo_v0.1.pdb (Full PDB)

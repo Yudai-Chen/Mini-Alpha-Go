@@ -4,6 +4,7 @@
 
 //the coordinate
 typedef std::pair<short, short> Coord;
+
 enum State { WHITE, BLACK, VALID, INVALID };
 
 // coordination change of a move

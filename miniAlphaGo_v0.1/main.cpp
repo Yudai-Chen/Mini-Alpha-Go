@@ -1,10 +1,15 @@
 #include <WinSock2.h>  
+#include <windows.h>
+#include <ctime>
 
-#include "board.h"
+#include "MCTS.h"
 #include "json/json.h"  
 
 #pragma comment(lib, "WS2_32.lib")  
 #pragma comment(lib, "json/json_vc71_libmtd.lib")  
+
+Coord star[4] = { Coord(2, 2), Coord(7, 7), Coord(2, 7), Coord(7, 2) };
+Coord corner[4] = { Coord(1, 1), Coord(8, 8), Coord(1, 8), Coord(8, 1) };
 
 //server和本地对坐标的定义方式不同，需要进行改动
 void localtoServer(Coord &coord)
@@ -23,8 +28,11 @@ void servertoLocal(Coord &coord)
 	coord.first = y + 1;
 	coord.second = x + 1;
 }
-/*int main()
+
+#ifdef PVE_MODE
+int main()
 {
+	std::srand((unsigned)time(NULL));
 	short x, y;
 	Board mainBoard;
 	while (1)
@@ -32,7 +40,6 @@ void servertoLocal(Coord &coord)
 		mainBoard.printBoard();
 		std::cout << "turn: " << mainBoard.whosTurn() << std::endl;
 		std::cout << "black: " << mainBoard.getPieceCount(true) << ", white: " << mainBoard.getPieceCount(false) << std::endl;
-		mainBoard.printBoundary();
 		std::cout << "your valid step :" << std::endl;
 		mainBoard.printValid();
 		if (mainBoard.whosTurn())
@@ -51,7 +58,11 @@ void servertoLocal(Coord &coord)
 		}
 		else
 		{
-			mainBoard.putPiece(mainBoard.randomlyChooseNextStep());
+			MCTS miniAlphaGo(mainBoard, mainBoard.whosTurn(), _C);
+			Coord move = miniAlphaGo.search();
+			miniAlphaGo.release();
+			std::cout << "miniAlphaGo: (" << move.first << ", " << move.second << ")" << std::endl;
+			mainBoard.putPiece(move);
 		}
 		Result res = mainBoard.isTerminal();
 		if (res == UNFINISHED)
@@ -70,15 +81,16 @@ void servertoLocal(Coord &coord)
 	}
 
 	return 0;	
-}*/
+}
+#endif
 
+#ifdef AIVE_MODE
 int main()
 {
+	std::srand((unsigned)time(NULL));
 	Json::Value send_value, recv_value;
 	Json::StyledWriter style_write;
 	Json::Reader reader;
-
-	bool mainTurn = true;
 
 	char rec[100];
 	std::string SendBuf;
@@ -97,7 +109,7 @@ int main()
 	//设置服务器地址  
 	RecvAddr.sin_family = PF_INET;
 	RecvAddr.sin_port = htons(4567);
-	RecvAddr.sin_addr.s_addr = inet_addr("192.168.18.1");
+	RecvAddr.sin_addr.s_addr = inet_addr("192.168.18.1");	//18.1
 
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
 	//创建Socket对象  
@@ -125,7 +137,6 @@ int main()
 			Coord move = Coord(recv_value["x"].asInt(), recv_value["y"].asInt());
 			servertoLocal(move);
 			mainBoard.putPiece(move);
-			mainTurn = !mainTurn;
 		}
 		while (1)
 		{
@@ -139,15 +150,16 @@ int main()
 			}
 			else
 			{
-				Coord move = mainBoard.randomlyChooseNextStep();		//AI仅仅需要改动这个获取坐标的方式
+				MCTS miniAlphaGo(mainBoard, mainBoard.whosTurn(), _C);
+				Coord move = miniAlphaGo.search();			
 				mainBoard.putPiece(move);
 				localtoServer(move);
 				send_value["x"] = move.first;
 				send_value["y"] = move.second;
 				SendBuf = style_write.write(send_value);
 				while (send(ReceiveSocket, SendBuf.c_str(), SendBuf.size(), 0) == -1);
+				miniAlphaGo.release();
 			}
-			mainTurn = !mainTurn;
 			res = mainBoard.isTerminal();
 			if (res < UNFINISHED)
 			{
@@ -167,7 +179,6 @@ int main()
 				servertoLocal(move);
 				mainBoard.putPiece(move);
 			}
-			mainTurn = !mainTurn;
 			res = mainBoard.isTerminal();
 			if (res < UNFINISHED)
 			{
@@ -179,3 +190,4 @@ int main()
 
 	}
 }
+#endif

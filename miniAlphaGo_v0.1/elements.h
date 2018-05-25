@@ -1,11 +1,11 @@
 #pragma once
-
+#include "omp.h"
 /*
 * weight of each method
 * 基于位置特征的位置价值：position value
 * 凝聚步：quiet move
-* 稳定子：stable piece, 40步之前几乎不可能有稳定子， 终局搜索再去判断即可
-* 行动力：ability of action
+* 稳定子：stable piece, 28步之前几乎不可能有稳定子
+* 行动力：mobility
 * 潜在行动力：potential
 * 棋子数：piece count
 * 奇偶性：parity，终局搜索的时候去算
@@ -19,8 +19,29 @@
 * 基本设计：棋盘10*10，称为abstract board，传入的合法坐标取值范围应当在(1,1)到(8,8)之间，可落子区域称为solid board
 */
 
+//#define PVE_MODE
+
+#define AIVE_MODE
+
+#define SOLID_THINK_TIME
+#ifdef SOLID_THINK_TIME
+const int think_time = 10;
+#define OUTPUT_SEARCH_TIME
+#endif // SOLID_THINK_TIME
+
+
+//#define SOLID_SEARCH_TIME
+#ifdef SOLID_SEARCH_TIME
+const int search_time = 100000;
+#define OUTPUT_THINK_TIME
+#endif // SOLID_SEARCH_TIME
+
+//#define SEARCH_PARALLELLY
+
 enum Result { WHITE_WIN, BLACK_WIN, DRAW, UNFINISHED };
 const std::string Result_String[] = { "White side win.", "Black side win.", "It's a draw." };
+
+const int pool_size = 4000;
 
 //position evaluate
 const short W1 = 1;
@@ -28,7 +49,7 @@ const short W1 = 1;
 const short W2 = 1;
 
 //the hyperparameter of MCTS. the greater it is, the more confidental to the result
-//也许在初盘、中盘、终局应当取不同的值
+//在初盘、中盘、终局应当取不同的值
 const double _C = 1.95;
 
 //weight evaluation, based on experience, used for position evaluate
@@ -44,3 +65,19 @@ const short position_value[10][10] = {
 	{ -8,20,-3,11, 8, 8,11,-3,20,-8 },
 	{ -8,-8,-8,-8,-8,-8,-8,-8,-8,-8 }
 };
+
+const double win_above_10 = 1;
+const double win_above_5 = 0.9;
+const double win_below_5 = 0.8;
+const double draw = 0.5;
+
+//#define DEBUG_MODE
+
+//#define DEBUG_MODE_BESTCHILD
+
+//#define DEBUG_MODE_RANDOM
+
+//#define DEBUG_PRINT_WHEN_NODE_100
+
+//#define DEBUG_MODE_NULLCHILID
+
