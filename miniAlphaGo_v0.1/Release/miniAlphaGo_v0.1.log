@@ -7,23 +7,27 @@ d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialpha
   board.cpp
 board.cpp(29): warning C4805: “==”: 在操作中将类型“State”与类型“bool”混合不安全
 board.cpp(81): warning C4805: “==”: 在操作中将类型“State”与类型“bool”混合不安全
+  library_reader_factory.cpp
+  library_solver.cpp
   main.cpp
 d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\MCTS_node.h(48): warning C4800: “unsigned int”: 将值强制为布尔值“true”或“false”(性能警告)
-main.cpp(96): warning C4996: 'Json::StyledWriter': Use StreamWriterBuilder instead
+main.cpp(142): warning C4996: 'Json::StyledWriter': Use StreamWriterBuilder instead
   d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\json\writer.h(227): note: 参见“Json::StyledWriter”的声明
-main.cpp(116): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+main.cpp(162): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
   C:\Program Files (x86)\Windows Kits\8.1\Include\um\WinSock2.h(1850): note: 参见“inet_addr”的声明
-main.cpp(124): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+main.cpp(170): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
   C:\Program Files (x86)\Windows Kits\8.1\Include\um\WinSock2.h(1850): note: 参见“inet_addr”的声明
-main.cpp(151): warning C4996: 'Json::StyledWriter::write': Use StreamWriterBuilder instead
+main.cpp(203): warning C4996: 'Json::StyledWriter::write': Use StreamWriterBuilder instead
   d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\json\writer.h(237): note: 参见“Json::StyledWriter::write”的声明
-main.cpp(166): warning C4996: 'Json::StyledWriter::write': Use StreamWriterBuilder instead
+main.cpp(226): warning C4996: 'Json::StyledWriter::write': Use StreamWriterBuilder instead
+  d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\json\writer.h(237): note: 参见“Json::StyledWriter::write”的声明
+main.cpp(238): warning C4996: 'Json::StyledWriter::write': Use StreamWriterBuilder instead
   d:\files\lessons\lesson 17-18 spring\artificial intelligence\project\1\minialphago_v0.1\minialphago_v0.1\json\writer.h(237): note: 参见“Json::StyledWriter::write”的声明
 json_vc71_libmtd.lib(json_value.obj) : warning LNK4075: 忽略“/EDITANDCONTINUE”(由于“/OPT:ICF”规范)
   正在生成代码
-  207 of 761 functions (27.2%) were compiled, the rest were copied from previous compilation.
-    152 functions were new in current compilation
-    127 functions had inline decision re-evaluated but remain unchanged
+  490 of 923 functions (53.1%) were compiled, the rest were copied from previous compilation.
+    141 functions were new in current compilation
+    81 functions had inline decision re-evaluated but remain unchanged
   已完成代码的生成
   miniAlphaGo_v0.1.vcxproj -> D:\files\Lessons\Lesson 17-18 spring\Artificial Intelligence\project\1\miniAlphaGo_v0.1\Release\miniAlphaGo_v0.1.exe
   miniAlphaGo_v0.1.vcxproj -> D:\files\Lessons\Lesson 17-18 spring\Artificial Intelligence\project\1\miniAlphaGo_v0.1\Release\miniAlphaGo_v0.1.pdb (Full PDB)

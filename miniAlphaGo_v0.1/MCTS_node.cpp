@@ -80,13 +80,17 @@ MCTS_node::MCTS_node(MCTS_node* parent, const Coord & move)
 
 double MCTS_node::calculateNodeQuality()
 {
+	if (board.getTurnId() > 39)	//进入残局
+	{
+	}
 	if (board.getTurnId() > 28)
 	{
-
+		
 	}
 	else if (board.getTurnId() > 20)
 	{
 		W1 = 0;	//不考虑位置估值
+		W6 = 0.1;	//考虑边角稳定子
 	}
 
 	double res = 0;

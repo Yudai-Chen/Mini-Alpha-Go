@@ -33,6 +33,18 @@
     <ClCompile Include="Memory_pool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="library_reader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="library_record.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="library_reader_factory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="library_solver.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MCTS.h">
@@ -84,6 +96,18 @@
       <Filter>头文件\json</Filter>
     </ClInclude>
     <ClInclude Include="memory_pool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="library_reader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="library_record.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="library_reader_factory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="library_solver.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

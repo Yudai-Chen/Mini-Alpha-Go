@@ -3,6 +3,8 @@
 #include <ctime>
 
 #include "MCTS.h"
+#include "library_reader_factory.h"
+#include "library_solver.h"
 #include "json/json.h"  
 
 #pragma comment(lib, "WS2_32.lib")  
@@ -14,6 +16,9 @@ extern double maxQuality, minQuality;
 
 Coord star[4] = { Coord(2, 2), Coord(7, 7), Coord(2, 7), Coord(7, 2) };
 Coord corner[4] = { Coord(1, 1), Coord(8, 8), Coord(1, 8), Coord(8, 1) };
+Library_reader_factory libReaderFactory;
+Library_solver libSolver;
+bool isMatch;
 
 //server和本地对坐标的定义方式不同，需要进行改动
 void localtoServer(Coord &coord)
@@ -33,11 +38,50 @@ void servertoLocal(Coord &coord)
 	coord.second = x + 1;
 }
 
+void loadLibraries()
+{
+	libReaderFactory.initLibrary("library/WTH_2016.wtb");
+	libReaderFactory.initLibrary("library/WTH_2015.wtb");
+	libReaderFactory.initLibrary("library/WTH_2014.wtb");
+	libReaderFactory.initLibrary("library/WTH_2013.wtb");
+	libReaderFactory.initLibrary("library/WTH_2012.wtb");
+	libReaderFactory.initLibrary("library/WTH_2011.wtb");
+	libReaderFactory.initLibrary("library/WTH_2010.wtb");
+	libReaderFactory.initLibrary("library/WTH_2009.wtb");
+	libReaderFactory.initLibrary("library/WTH_2008.wtb");
+	libReaderFactory.initLibrary("library/WTH_2007.wtb");
+	libReaderFactory.initLibrary("library/WTH_2006.wtb");
+	libReaderFactory.initLibrary("library/WTH_2005.wtb");
+	libReaderFactory.initLibrary("library/WTH_2004.wtb");
+	libReaderFactory.initLibrary("library/WTH_2003.wtb");
+	libReaderFactory.initLibrary("library/WTH_2002.wtb");
+	libReaderFactory.initLibrary("library/WTH_2001.wtb");
+	libReaderFactory.initLibrary("library/WTH_2000.wtb");
+	libReaderFactory.initLibrary("library/WTH_1999.wtb");
+	libReaderFactory.initLibrary("library/WTH_1998.wtb");
+	libReaderFactory.initLibrary("library/WTH_1997.wtb");
+	libReaderFactory.initLibrary("library/WTH_1996.wtb");
+	libReaderFactory.initLibrary("library/WTH_1995.wtb");
+	libReaderFactory.initLibrary("library/WTH_1994.wtb");
+	libReaderFactory.initLibrary("library/WTH_1993.wtb");
+	libReaderFactory.initLibrary("library/WTH_1992.wtb");
+	libReaderFactory.initLibrary("library/WTH_1991.wtb");
+	libReaderFactory.initLibrary("library/WTH_1990.wtb");
+	libReaderFactory.initLibrary("library/WTH_1989.wtb");
+	libReaderFactory.initLibrary("library/WTH_1988.wtb");
+	libSolver.buildLibraryTree(libReaderFactory);
+	libReaderFactory.release();
+	isMatch = true;
+}
+
 #ifdef PVE_MODE
 int main()
 {
 	std::srand((unsigned)time(NULL));
 	short x, y;
+#ifdef USE_LIBRARY
+	loadLibraries();
+#endif
 	Board mainBoard;
 	while (1)
 	{
@@ -46,7 +90,7 @@ int main()
 		std::cout << "black: " << mainBoard.getPieceCount(true) << ", white: " << mainBoard.getPieceCount(false) << std::endl;
 		std::cout << "your valid step :" << std::endl;
 		mainBoard.printValid();
-		if (mainBoard.whosTurn())
+		if (!mainBoard.whosTurn())
 		{
 			while (1)
 			{
@@ -83,7 +127,9 @@ int main()
 		std::cout << "black: " << mainBoard.getPieceCount(true) << ", white: " << mainBoard.getPieceCount(false) << std::endl;
 		break;
 	}
-
+#ifdef USE_LIBRARY
+	libSolver.releaseLibraryTree();
+#endif
 	return 0;	
 }
 #endif
@@ -126,6 +172,9 @@ int main()
 
 
 	Board mainBoard;
+#ifdef USE_LIBRARY
+	loadLibraries();
+#endif
 	memset(rec, 0, 100);
 	while (connect(ReceiveSocket, (struct sockaddr *)&SendAddr, sizeof(SendAddr)) == -1);
 
@@ -140,6 +189,9 @@ int main()
 		Coord move = Coord(recv_value["x"].asInt(), recv_value["y"].asInt());
 		servertoLocal(move);
 		mainBoard.putPiece(move);
+#ifdef USE_LIBRARY
+		libSolver.changeState(move, -1);
+#endif
 	}
 	while (1)
 	{
@@ -153,10 +205,41 @@ int main()
 		}
 		else
 		{
-#ifdef DEBUG_MODE_POSITION_VALUE_EVALUATE
-			maxQuality = 0;
-			minQuality = 0;
-#endif // DEBUG_MODE_POSITION_VALUE_EVALUATE
+#ifdef USE_LIBRARY
+			Coord move;
+			if (isMatch)
+			{
+				move = libSolver.getBestMoveAndChangeState();
+				if (move == Coord(-1, -1))
+				{
+					isMatch = false;
+				}
+				else
+				{
+#ifdef OUTPUT_MATCH
+					std::cout << "match!" << std::endl;
+#endif
+					mainBoard.putPiece(move);
+					localtoServer(move);
+					send_value["x"] = move.first;
+					send_value["y"] = move.second;
+					SendBuf = style_write.write(send_value);
+					while (send(ReceiveSocket, SendBuf.c_str(), SendBuf.size(), 0) == -1);
+				}
+			}
+			if (!isMatch)
+			{
+				MCTS miniAlphaGo(mainBoard, mainBoard.whosTurn(), _C);
+				move = miniAlphaGo.search();
+				mainBoard.putPiece(move);
+				localtoServer(move);
+				send_value["x"] = move.first;
+				send_value["y"] = move.second;
+				SendBuf = style_write.write(send_value);
+				while (send(ReceiveSocket, SendBuf.c_str(), SendBuf.size(), 0) == -1);
+				miniAlphaGo.release();
+			}			
+#else
 			MCTS miniAlphaGo(mainBoard, mainBoard.whosTurn(), _C);
 			Coord move = miniAlphaGo.search();
 			mainBoard.putPiece(move);
@@ -166,9 +249,7 @@ int main()
 			SendBuf = style_write.write(send_value);
 			while (send(ReceiveSocket, SendBuf.c_str(), SendBuf.size(), 0) == -1);
 			miniAlphaGo.release();
-#ifdef DEBUG_MODE_POSITION_VALUE_EVALUATE
-			std::cout << "max quality: " << maxQuality << std::endl << "min quality: " << minQuality << std::endl << std::endl;
-#endif // DEBUG_MODE_POSITION_VALUE_EVALUATE
+#endif
 		}
 		res = mainBoard.isTerminal();
 		if (res < UNFINISHED)
@@ -188,6 +269,19 @@ int main()
 			Coord move = Coord(recv_value["x"].asInt(), recv_value["y"].asInt());
 			servertoLocal(move);
 			mainBoard.putPiece(move);
+#ifdef USE_LIBRARY
+			if (isMatch)
+			{
+				if (libSolver.changeState(move, -1) != 0)
+				{
+					isMatch = false;
+				}
+#ifdef OUTPUT_MATCH
+				else
+					std::cout << "match!" << std::endl;
+#endif
+			}
+#endif
 		}
 		res = mainBoard.isTerminal();
 		if (res < UNFINISHED)
@@ -197,6 +291,14 @@ int main()
 			break;
 		}
 	}
-
+#ifdef USE_LIBRARY
+	libSolver.releaseLibraryTree();
+#endif
+	return 0;
 }
 #endif
+
+/*int main()
+{
+
+}	*/

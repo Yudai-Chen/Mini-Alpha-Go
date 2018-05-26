@@ -155,6 +155,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="board.cpp" />
+    <ClCompile Include="library_reader.cpp" />
+    <ClCompile Include="library_reader_factory.cpp" />
+    <ClCompile Include="library_record.cpp" />
+    <ClCompile Include="library_solver.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MCTS.cpp" />
     <ClCompile Include="MCTS_node.cpp" />
@@ -174,6 +178,10 @@
     <ClInclude Include="json\value.h" />
     <ClInclude Include="json\version.h" />
     <ClInclude Include="json\writer.h" />
+    <ClInclude Include="library_reader.h" />
+    <ClInclude Include="library_reader_factory.h" />
+    <ClInclude Include="library_record.h" />
+    <ClInclude Include="library_solver.h" />
     <ClInclude Include="MCTS.h" />
     <ClInclude Include="MCTS_node.h" />
     <ClInclude Include="memory_pool.h" />

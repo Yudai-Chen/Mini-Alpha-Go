@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include "omp.h"
 /*
 * weight of each method
@@ -19,19 +20,26 @@
 * 基本设计：棋盘10*10，称为abstract board，传入的合法坐标取值范围应当在(1,1)到(8,8)之间，可落子区域称为solid board
 */
 
-//#define PVE_MODE
+//#define PVE_MODE	
 
 #define AIVE_MODE
 
+#define USE_LIBRARY
+#ifdef USE_LIBRARY
+//#define OUTPUT_MATCH
+#endif
+
+//#define LIBRARY_READER_TEST
+
 //#define PRINT_DETAIL_SCORES
 
-#define SOLID_THINK_TIME
+#define SOLID_THINK_TIME	//固定思考时间
 #ifdef SOLID_THINK_TIME
 const int think_time = 10;
 //#define OUTPUT_SEARCH_TIME
 #endif // SOLID_THINK_TIME
 
-//#define SOLID_SEARCH_TIME
+//#define SOLID_SEARCH_TIME	//固定搜索次数
 #ifdef SOLID_SEARCH_TIME
 const int search_time = 100000;
 #define OUTPUT_THINK_TIME
@@ -42,6 +50,8 @@ enum Result { WHITE_WIN, BLACK_WIN, DRAW, UNFINISHED };
 const std::string Result_String[] = { "White side win.", "Black side win.", "It's a draw." };
 
 const int pool_size = 4000;
+
+const int max_library_number = 35;	//最大可导入开局库的数量
 
 //the hyperparameter of MCTS. the greater it is, the more confidental to the result
 //在初盘、中盘、终局应当取不同的值
